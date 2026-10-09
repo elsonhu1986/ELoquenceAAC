@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">ELoquence AAC</string>
+    <string name="sentence_strip_placeholder">Tap cards below to compose a sentence…</string>
+    <string name="action_speak">Speak Sentence</string>
+    <string name="action_clear">Clear Sentence</string>
+    <string name="action_backspace">Delete Last Word</string>
+    <string name="action_copy">Copy Text</string>
+    <string name="action_share">Share Sentence</string>
+    <string name="category_core">Core Vocab</string>
+    <string name="category_pronouns">People</string>
+    <string name="category_actions">Actions</string>
+    <string name="category_descriptors">Descriptors</string>
+    <string name="category_nouns">Objects</string>
+    <string name="category_social">Social</string>
+    <string name="category_prepositions">Prepositions</string>
+    <string name="category_questions">Questions</string>
+    <string name="category_quick_phrases">Quick Phrases</string>
+    <string name="tab_grid">Grid Board</string>
+    <string name="tab_quick_chat">Quick Chat</string>
+    <string name="tab_type_to_speak">Type to Speak</string>
+    <string name="tab_settings">Settings &amp; Voice</string>
+    <string name="btn_add_card">Add Custom Card</string>
+</resources>
