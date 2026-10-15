@@ -22,6 +22,7 @@ class AACPreferences(context: Context) {
     private const val KEY_HAPTIC = "pref_haptic"
     private const val KEY_HIGH_CONTRAST_CVI = "pref_high_contrast_cvi"
     private const val KEY_GRID_COLUMNS = "pref_grid_columns"
+    private const val KEY_CARD_SIZE = "pref_card_size"
     private const val KEY_CUSTOM_TILES = "pref_custom_tiles"
     private const val KEY_HISTORY = "pref_sentence_history"
     private const val KEY_FAVORITES = "pref_favorite_phrases"
@@ -29,6 +30,7 @@ class AACPreferences(context: Context) {
   }
 
   fun getSettings(): SpeechSettings {
+    val cardSizeName = prefs.getString(KEY_CARD_SIZE, com.example.model.AACCardSize.STANDARD.name)
     return SpeechSettings(
       pitch = prefs.getFloat(KEY_PITCH, 1.0f),
       rate = prefs.getFloat(KEY_RATE, 1.0f),
@@ -36,7 +38,8 @@ class AACPreferences(context: Context) {
       clearAfterSpeak = prefs.getBoolean(KEY_CLEAR_AFTER_SPEAK, false),
       hapticFeedback = prefs.getBoolean(KEY_HAPTIC, true),
       highContrastCvi = prefs.getBoolean(KEY_HIGH_CONTRAST_CVI, false),
-      gridColumns = prefs.getInt(KEY_GRID_COLUMNS, 4)
+      gridColumns = prefs.getInt(KEY_GRID_COLUMNS, 4),
+      cardSize = com.example.model.AACCardSize.fromName(cardSizeName)
     )
   }
 
@@ -49,6 +52,7 @@ class AACPreferences(context: Context) {
       .putBoolean(KEY_HAPTIC, settings.hapticFeedback)
       .putBoolean(KEY_HIGH_CONTRAST_CVI, settings.highContrastCvi)
       .putInt(KEY_GRID_COLUMNS, settings.gridColumns)
+      .putString(KEY_CARD_SIZE, settings.cardSize.name)
       .apply()
   }
 

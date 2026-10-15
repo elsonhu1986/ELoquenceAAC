@@ -28,6 +28,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.example.model.AACCardSize
 import com.example.model.AACTile
 
 @OptIn(ExperimentalFoundationApi::class)
@@ -35,7 +36,7 @@ import com.example.model.AACTile
 fun AACCard(
   tile: AACTile,
   isCviMode: Boolean = false,
-  cardHeightDp: Int = 88,
+  cardSize: AACCardSize = AACCardSize.STANDARD,
   onClick: () -> Unit,
   onLongClick: (() -> Unit)? = null,
   modifier: Modifier = Modifier
@@ -53,7 +54,7 @@ fun AACCard(
     modifier = modifier
       .scale(scale)
       .fillMaxWidth()
-      .height(cardHeightDp.dp)
+      .height(cardSize.baseHeightDp.dp)
       .combinedClickable(
         interactionSource = interactionSource,
         indication = ripple(color = textColor.copy(alpha = 0.3f)),
@@ -61,7 +62,7 @@ fun AACCard(
         onLongClick = onLongClick
       )
       .testTag("aac_card_${tile.id}"),
-    shape = RoundedCornerShape(12.dp),
+    shape = RoundedCornerShape(if (cardSize == AACCardSize.EXTRA_LARGE) 16.dp else 12.dp),
     color = bgColor,
     border = BorderStroke(if (isCviMode) 2.5.dp else 2.dp, borderColor),
     shadowElevation = if (isPressed) 1.dp else 3.dp,
@@ -70,7 +71,7 @@ fun AACCard(
     Box(
       modifier = Modifier
         .fillMaxSize()
-        .padding(horizontal = 6.dp, vertical = 6.dp)
+        .padding(horizontal = cardSize.paddingDp.dp, vertical = cardSize.paddingDp.dp)
     ) {
       // Subfolder indicator in top-right corner
       if (tile.isFolder) {
@@ -79,7 +80,7 @@ fun AACCard(
           contentDescription = "Folder",
           tint = textColor.copy(alpha = 0.85f),
           modifier = Modifier
-            .size(16.dp)
+            .size((cardSize.iconSizeDp / 2).coerceAtLeast(14).dp)
             .align(Alignment.TopEnd)
         )
       }
@@ -95,7 +96,7 @@ fun AACCard(
             contentDescription = tile.label,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-              .size(if (cardHeightDp > 85) 36.dp else 28.dp)
+              .size((cardSize.iconSizeDp + 4).dp)
               .clip(RoundedCornerShape(8.dp))
           )
         } else {
@@ -103,17 +104,17 @@ fun AACCard(
             imageVector = icon,
             contentDescription = null,
             tint = textColor,
-            modifier = Modifier.size(if (cardHeightDp > 85) 32.dp else 26.dp)
+            modifier = Modifier.size(cardSize.iconSizeDp.dp)
           )
         }
 
-        Spacer(modifier = Modifier.height(4.dp))
+        Spacer(modifier = Modifier.height(if (cardSize == AACCardSize.COMPACT) 2.dp else 4.dp))
 
         Text(
           text = tile.label,
           style = MaterialTheme.typography.labelMedium.copy(
             fontWeight = FontWeight.Bold,
-            fontSize = if (cardHeightDp > 85) 14.sp else 12.sp,
+            fontSize = cardSize.fontSizeSp.sp,
             letterSpacing = 0.01.sp
           ),
           color = textColor,

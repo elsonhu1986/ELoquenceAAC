@@ -64,4 +64,32 @@ class ExampleRobolectricTest {
     val deletedIds = prefs.getDeletedTileIds()
     assertTrue(deletedIds.contains("test_custom_1"))
   }
+
+  @Test
+  fun `verify card size setting saves and restores correctly`() {
+    val context = ApplicationProvider.getApplicationContext<Context>()
+    val prefs = AACPreferences(context)
+
+    // Initial default should be STANDARD
+    val defaultSettings = prefs.getSettings()
+    assertEquals(com.example.model.AACCardSize.STANDARD, defaultSettings.cardSize)
+
+    // Update to LARGE
+    val largeSettings = defaultSettings.copy(cardSize = com.example.model.AACCardSize.LARGE)
+    prefs.saveSettings(largeSettings)
+    val loadedLarge = prefs.getSettings()
+    assertEquals(com.example.model.AACCardSize.LARGE, loadedLarge.cardSize)
+
+    // Update to EXTRA_LARGE
+    val xlSettings = defaultSettings.copy(cardSize = com.example.model.AACCardSize.EXTRA_LARGE)
+    prefs.saveSettings(xlSettings)
+    val loadedXl = prefs.getSettings()
+    assertEquals(com.example.model.AACCardSize.EXTRA_LARGE, loadedXl.cardSize)
+
+    // Update to COMPACT
+    val compactSettings = defaultSettings.copy(cardSize = com.example.model.AACCardSize.COMPACT)
+    prefs.saveSettings(compactSettings)
+    val loadedCompact = prefs.getSettings()
+    assertEquals(com.example.model.AACCardSize.COMPACT, loadedCompact.cardSize)
+  }
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.data.VocabularyData
+import com.example.model.AACCardSize
 import com.example.model.AACTile
 import com.example.model.FitzgeraldCategory
 import com.example.ui.components.AACCard
@@ -37,6 +38,7 @@ fun GridBoardScreen(
   searchQuery: String,
   isCviMode: Boolean,
   gridColumns: Int,
+  cardSize: AACCardSize = AACCardSize.STANDARD,
   onTileClick: (AACTile) -> Unit,
   onSpeak: () -> Unit,
   onClear: () -> Unit,
@@ -56,11 +58,6 @@ fun GridBoardScreen(
   var tilePendingDelete by remember { mutableStateOf<AACTile?>(null) }
 
   val folderDisplayName = currentFolderId?.let { VocabularyData.folderNames[it] ?: "Subfolder" }
-  val cardHeight = when (gridColumns) {
-    3 -> 96
-    5 -> 78
-    else -> 86
-  }
 
   Column(
     modifier = modifier
@@ -282,7 +279,7 @@ fun GridBoardScreen(
           AACCard(
             tile = tile,
             isCviMode = isCviMode,
-            cardHeightDp = cardHeight,
+            cardSize = cardSize,
             onClick = { onTileClick(tile) },
             onLongClick = { tilePendingDelete = tile }
           )

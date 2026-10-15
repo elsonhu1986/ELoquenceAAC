@@ -267,6 +267,7 @@ fun AACMainScreen(
               searchQuery = searchQuery,
               isCviMode = settings.highContrastCvi,
               gridColumns = if (isWideScreen && settings.gridColumns < 5) settings.gridColumns + 1 else settings.gridColumns,
+              cardSize = settings.cardSize,
               onTileClick = { viewModel.onTileClicked(it) },
               onSpeak = { viewModel.speakCurrentSentence() },
               onClear = { viewModel.clearSentence() },

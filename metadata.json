@@ -1,6 +1,8 @@
 {
-  "name": "ELoquence AAC",
+  "name": "Remix Remix ELoquence AAC",
   "description": "Modern AAC assistive communication app with Fitzgerald Key categorization, text-to-speech sentence strip, customizable vocabulary grids, and high-contrast tactile design.",
   "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
 }

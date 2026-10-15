@@ -11,6 +11,7 @@ import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,9 +26,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import com.example.R
+import com.example.model.AACCardSize
 import com.example.model.AACTile
+import com.example.model.FitzgeraldCategory
 import com.example.model.SentenceHistoryItem
 import com.example.model.SpeechSettings
+import com.example.ui.components.AACCard
 import com.example.ui.components.IconHelper
 import com.example.ui.theme.EloquencePrimary
 import java.text.SimpleDateFormat
@@ -243,7 +247,166 @@ fun SettingsScreen(
       }
     }
 
-    // --- Section 3: Communication Grid Matrix Density ---
+    // --- Section 3: Card Size & Touch Target ---
+    item {
+      SettingsCard(title = "Card Size & Appearance") {
+        Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+          Text(
+            text = "Choose the card height, icon scale, and touch target size across the communication grid:",
+            style = MaterialTheme.typography.bodyMedium.copy(color = MaterialTheme.colorScheme.onSurfaceVariant)
+          )
+
+          Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+            AACCardSize.entries.forEach { size ->
+              val isSelected = settings.cardSize == size
+              Surface(
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .clickable { onUpdateSettings(settings.copy(cardSize = size)) }
+                  .testTag("btn_card_size_${size.name.lowercase()}"),
+                shape = RoundedCornerShape(12.dp),
+                color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
+                border = BorderStroke(
+                  width = if (isSelected) 2.dp else 1.dp,
+                  color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.5f)
+                )
+              ) {
+                Row(
+                  modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 14.dp, vertical = 10.dp),
+                  verticalAlignment = Alignment.CenterVertically,
+                  horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                  Row(
+                    modifier = Modifier.weight(1f),
+                    verticalAlignment = Alignment.CenterVertically
+                  ) {
+                    RadioButton(
+                      selected = isSelected,
+                      onClick = { onUpdateSettings(settings.copy(cardSize = size)) },
+                      modifier = Modifier.padding(end = 8.dp)
+                    )
+                    Column {
+                      Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(
+                          text = size.displayName,
+                          style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.Bold,
+                            color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface
+                          )
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Surface(
+                          shape = RoundedCornerShape(6.dp),
+                          color = if (isSelected) MaterialTheme.colorScheme.primary.copy(alpha = 0.15f) else MaterialTheme.colorScheme.surfaceContainerHighest
+                        ) {
+                          Text(
+                            text = "${size.baseHeightDp} dp",
+                            style = MaterialTheme.typography.labelSmall.copy(
+                              fontWeight = FontWeight.Bold,
+                              color = if (isSelected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
+                            ),
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 2.dp)
+                          )
+                        }
+                      }
+                      Text(
+                        text = size.subtitle,
+                        style = MaterialTheme.typography.bodySmall.copy(
+                          color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                      )
+                    }
+                  }
+
+                  if (isSelected) {
+                    Icon(
+                      imageVector = Icons.Default.CheckCircle,
+                      contentDescription = "Selected",
+                      tint = MaterialTheme.colorScheme.primary,
+                      modifier = Modifier.size(22.dp)
+                    )
+                  }
+                }
+              }
+            }
+          }
+
+          Spacer(modifier = Modifier.height(4.dp))
+
+          // Live Interactive Card Preview
+          Surface(
+            shape = RoundedCornerShape(12.dp),
+            color = MaterialTheme.colorScheme.surfaceContainerLow,
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+            modifier = Modifier.fillMaxWidth()
+          ) {
+            Column(
+              modifier = Modifier.padding(12.dp),
+              verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+              ) {
+                Text(
+                  text = "Live Card Preview",
+                  style = MaterialTheme.typography.labelLarge.copy(
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                  )
+                )
+                Text(
+                  text = "Tap to sample",
+                  style = MaterialTheme.typography.labelSmall.copy(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.SemiBold
+                  )
+                )
+              }
+
+              Box(
+                modifier = Modifier
+                  .fillMaxWidth()
+                  .padding(vertical = 4.dp),
+                contentAlignment = Alignment.Center
+              ) {
+                Box(modifier = Modifier.widthIn(max = 160.dp)) {
+                  val sampleTile = remember {
+                    AACTile(
+                      id = "sample_preview_tile",
+                      label = "Want",
+                      spokenText = "Want",
+                      category = FitzgeraldCategory.ACTION_VERB,
+                      iconName = "pan_tool"
+                    )
+                  }
+                  AACCard(
+                    tile = sampleTile,
+                    isCviMode = settings.highContrastCvi,
+                    cardSize = settings.cardSize,
+                    onClick = { onSpeakHistoryItem("Want") }
+                  )
+                }
+              }
+
+              Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+              ) {
+                PreviewSpecBadge(label = "Height", value = "${settings.cardSize.baseHeightDp} dp")
+                PreviewSpecBadge(label = "Icon", value = "${settings.cardSize.iconSizeDp} dp")
+                PreviewSpecBadge(label = "Font", value = "${settings.cardSize.fontSizeSp} sp")
+              }
+            }
+          }
+        }
+      }
+    }
+
+    // --- Section 4: Communication Grid Matrix Density ---
     item {
       SettingsCard(title = "Grid Layout Density") {
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -265,7 +428,8 @@ fun SettingsScreen(
               Surface(
                 modifier = Modifier
                   .weight(1f)
-                  .clickable { onUpdateSettings(settings.copy(gridColumns = cols)) },
+                  .clickable { onUpdateSettings(settings.copy(gridColumns = cols)) }
+                  .testTag("btn_grid_columns_$cols"),
                 shape = RoundedCornerShape(10.dp),
                 color = if (isSelected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh,
                 border = if (isSelected) BorderStroke(2.dp, MaterialTheme.colorScheme.primary) else null
@@ -467,5 +631,32 @@ private fun SettingSwitchRow(
       checked = checked,
       onCheckedChange = onCheckedChange
     )
+  }
+}
+
+@Composable
+private fun PreviewSpecBadge(label: String, value: String) {
+  Surface(
+    shape = RoundedCornerShape(8.dp),
+    color = MaterialTheme.colorScheme.surfaceContainerHighest
+  ) {
+    Row(
+      modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+      verticalAlignment = Alignment.CenterVertically
+    ) {
+      Text(
+        text = "$label: ",
+        style = MaterialTheme.typography.labelSmall.copy(
+          color = MaterialTheme.colorScheme.onSurfaceVariant
+        )
+      )
+      Text(
+        text = value,
+        style = MaterialTheme.typography.labelSmall.copy(
+          fontWeight = FontWeight.Bold,
+          color = MaterialTheme.colorScheme.onSurface
+        )
+      )
+    }
   }
 }
